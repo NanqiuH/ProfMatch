@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 
 // Function to format timestamp
 const formatDate = (date) => {
-  if (!date) return ''; // Return an empty string if date is undefined or null
+  if (!date) return ''; 
   const options = {
     hour: '2-digit',
     minute: '2-digit',
@@ -14,7 +14,16 @@ const formatDate = (date) => {
   return date.toLocaleTimeString([], options);
 };
 
+// Function to clean and format the message content
+const cleanUpMessageContent = (content) => {
+  // Remove '**' from the content
+  let cleanedContent = content.replace(/\*\*/g, '');
 
+  // Ensure each section (Name, Department, etc.) starts on a new line
+  cleanedContent = cleanedContent.replace(/(Name:|Department:|Rating:|Summary:|Additional Guidance:)/g, '\n$1');
+
+  return cleanedContent.trim();
+};
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
@@ -25,8 +34,7 @@ export default function Home() {
     setMessages([
       {
         role: 'assistant',
-        content:
-          "Hi! I'm the Rate my professor assistant. How can I help you today?",
+        content: "Hi! I'm the ProfMatch assistant. How can I help you today?",
         timestamp: new Date(),
       },
     ]);
@@ -36,14 +44,14 @@ export default function Home() {
     const newMessage = {
       role: 'user',
       content: message,
-      timestamp: new Date(), // Add the current date as a timestamp
+      timestamp: new Date(),
     };
     
     setMessage('');
     setMessages((messages) => [
       ...messages,
       newMessage,
-      { role: 'assistant', content: '', timestamp: new Date() }, // Adding timestamp for assistant as well
+      { role: 'assistant', content: '', timestamp: new Date() },
     ]);
   
     const response = fetch('/api/chat', {
@@ -91,7 +99,6 @@ export default function Home() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-  
 
   return (
     <Box
@@ -100,18 +107,18 @@ export default function Home() {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      justifyContent="flex-start" // Align items to start from the top
+      justifyContent="flex-start" 
       bgcolor="#f1f3f4"
     >
       {/* Title at the top left */}
       <Box
         width={{ xs: '90%', sm: '80%', md: '60%', lg: '40%' }}
         textAlign="left"
-        mt={2} // Add some margin from the top
-        ml={2} // Add some margin from the left
+        mt={2}
+        ml={2}
       >
         <Typography variant="h6" color="textPrimary">
-          Chat with Headstarter AI
+          Chat with ProfMatch AI
         </Typography>
       </Box>
 
@@ -119,12 +126,12 @@ export default function Home() {
       <Stack
         direction={'column'}
         width={{ xs: '90%', sm: '80%', md: '60%', lg: '40%' }}
-        height="80vh"
+        height="85vh"
         bgcolor="white"
         borderRadius={2}
         boxShadow={3}
         p={2}
-        mt={2} // Add margin to separate title from chat
+        mt={2} 
         spacing={3}
       >
         <Stack
@@ -152,11 +159,11 @@ export default function Home() {
                 sx={{
                   marginBottom: '4px',
                   textAlign: message.role === 'assistant' ? 'left' : 'right',
-                  width: '100%', // Ensure label takes the full width
+                  width: '100%', 
                 }}
               >
                 {message.role === 'assistant'
-                  ? `Headstarter Assistance`
+                  ? `ProfMatch Assistance`
                   : 'You'}{' '}
                 | {formatDate(message.timestamp)}
               </Typography>
@@ -181,9 +188,10 @@ export default function Home() {
                   sx={{
                     maxWidth: '75%',
                     wordWrap: 'break-word',
+                    whiteSpace: 'pre-wrap',
                   }}
                 >
-                  <Typography variant="body2">{message.content}</Typography>
+                  <Typography variant="body2">{cleanUpMessageContent(message.content)}</Typography>
                 </Box>
               </Box>
             </Box>
