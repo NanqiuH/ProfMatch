@@ -1,0 +1,125 @@
+{
+    "reviews": [
+      {
+        "professor": "Dr. Yuya Sasaki",
+        "review": "Dr. Sasaki's lectures are incredibly detailed, and his knowledge of econometrics is unmatched. However, the material can be quite challenging.",
+        "subject": "Econometrics",
+        "stars": 4
+      },
+      {
+        "professor": "Professor Wendy Liu",
+        "review": "Professor Liu is a great instructor who really cares about her students. Her finance course is well-organized and practical, but the workload is heavy.",
+        "subject": "Finance",
+        "stars": 5
+      },
+      {
+        "professor": "Professor Leonora Zilkha Williamson",
+        "review": "Professor Williamson is passionate about business strategy and brings a lot of real-world examples to class. However, her grading can be tough.",
+        "subject": "Business Strategy",
+        "stars": 3
+      },
+      {
+        "professor": "Dr. Martina Pardo",
+        "review": "Dr. Pardo's lectures are engaging, and she encourages participation. The projects are interesting, but the exams are challenging.",
+        "subject": "Data Science",
+        "stars": 4
+      },
+      {
+        "professor": "Professor Ethan Nevins",
+        "review": "Professor Nevins is knowledgeable and approachable. He makes complex topics understandable, but his lectures can sometimes be a bit dry.",
+        "subject": "Computer Science",
+        "stars": 4
+      },
+      {
+        "professor": "Dr. Nakul Patel",
+        "review": "Dr. Patel is a great professor with a deep understanding of mathematics. His classes are rigorous, but he is always willing to help.",
+        "subject": "Mathematics",
+        "stars": 5
+      },
+      {
+        "professor": "Dr. Elizabeth Reed",
+        "review": "Dr. Reed's course on program evaluation is comprehensive. She is an excellent instructor, though the content can be dense.",
+        "subject": "Program Evaluation",
+        "stars": 4
+      },
+      {
+        "professor": "Professor Nevins",
+        "review": "Professor Nevins is extremely thorough in his teaching. He ensures everyone understands the material, but the pace is a bit fast.",
+        "subject": "Software Engineering",
+        "stars": 4
+      },
+      {
+        "professor": "Dr. Wesley Hong",
+        "review": "Dr. Hong is an excellent professor who makes learning enjoyable. The course was challenging but very rewarding.",
+        "subject": "Machine Learning",
+        "stars": 5
+      },
+      {
+        "professor": "Professor Zheng Huaqing",
+        "review": "Professor Zhèng's courses are well-structured, and he provides great resources. However, the grading can be a bit harsh.",
+        "subject": "Economics",
+        "stars": 3
+      },
+      {
+        "professor": "Dr. Laura Kim",
+        "review": "Dr. Kim is a brilliant instructor. Her course on data visualization was eye-opening, though the assignments were time-consuming.",
+        "subject": "Data Visualization",
+        "stars": 4
+      },
+      {
+        "professor": "Professor Alan Thompson",
+        "review": "Professor Thompson's classes are very interactive. He makes statistics interesting, but his exams are tough.",
+        "subject": "Statistics",
+        "stars": 3
+      },
+      {
+        "professor": "Dr. Sara Johnson",
+        "review": "Dr. Johnson is passionate about environmental science and makes the content relatable. However, the grading is strict.",
+        "subject": "Environmental Science",
+        "stars": 4
+      },
+      {
+        "professor": "Professor Michael Tan",
+        "review": "Professor Tan is approachable and supportive. His AI course was challenging, but he provided ample resources to succeed.",
+        "subject": "Artificial Intelligence",
+        "stars": 5
+      },
+      {
+        "professor": "Dr. Rachel Lee",
+        "review": "Dr. Lee's lectures are clear and concise. She is always willing to help, though the subject matter can be difficult.",
+        "subject": "Quantum Computing",
+        "stars": 4
+      },
+      {
+        "professor": "Professor David Harris",
+        "review": "Professor Harris is a great educator with a lot of industry experience. His cybersecurity class was fascinating but demanding.",
+        "subject": "Cybersecurity",
+        "stars": 4
+      },
+      {
+        "professor": "Dr. Emily Carter",
+        "review": "Dr. Carter is enthusiastic and knowledgeable. Her course on machine learning is challenging but highly rewarding.",
+        "subject": "Machine Learning",
+        "stars": 5
+      },
+      {
+        "professor": "Professor Richard Green",
+        "review": "Professor Green's course on blockchain technology was very informative. However, the lectures could be a bit more engaging.",
+        "subject": "Blockchain Technology",
+        "stars": 3
+      },
+      {
+        "professor": "Dr. Olivia Martinez",
+        "review": "Dr. Martinez is an excellent professor who makes complex topics understandable. Her networking course is a must-take!",
+        "subject": "Networking",
+        "stars": 5
+      },
+      {
+        "professor": "Professor John Doe",
+        "review": "Professor Doe's classes are well-organized, and he is very approachable. However, the course material can be overwhelming at times.",
+        "subject": "Software Architecture",
+        "stars": 4
+      }
+    ]
+  }
+  
