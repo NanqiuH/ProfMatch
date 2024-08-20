@@ -191,7 +191,9 @@ export default function Home() {
                     whiteSpace: 'pre-wrap',
                   }}
                 >
-                  <Typography variant="body2">{cleanUpMessageContent(message.content)}</Typography>
+                  <Typography variant="body2">
+                    {cleanUpMessageContent(message.content)}
+                  </Typography>
                 </Box>
               </Box>
             </Box>

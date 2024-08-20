@@ -30,17 +30,17 @@ Agent Response:
 
 1. Dr. Emily Thompson
    - Department: Data Science
-   - Rating: 4.8/5
+   - Rating: 4.8/5.0
    - Summary: Dr. Thompson is highly regarded for her clear and engaging lectures. Students frequently mention her approachability and willingness to offer extra help during office hours. Her grading is fair, and she provides plenty of opportunities for students to succeed.
 
 2. Dr. Alan Rodriguez
    - Department: Computer Science & Data Analytics
-   - Rating: 4.7/5
+   - Rating: 4.7/5.0
    - Summary: Known for his supportive teaching style, Dr. Rodriguez offers clear explanations and a structured course format. Students appreciate his detailed feedback on assignments and his flexible grading policies.
 
 3. Dr. Karen Li
    - Department: Statistics & Data Science
-   - Rating: 4.6/5
+   - Rating: 4.6/5.0
    - Summary: Dr. Li is praised for her approachable nature and dedication to student success. Her courses are well-organized, and she is known for being lenient on deadlines and providing helpful resources throughout the course.
 
 **Additional Guidance:** If you're deciding between these professors, you might also want to consider the specific courses they offer and how they fit with your schedule. It can also be helpful to talk to classmates who have taken their courses for more personal insights.
