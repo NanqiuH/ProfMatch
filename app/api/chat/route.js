@@ -19,21 +19,30 @@ export async function POST(req) {
     })
 
     const results = await index.query({
-        topK: 3,
-        includeMetadata: true,
-        vector: embedding.data[0].embedding,
-    })
-
-    let resultString = ''
-    results.matches.forEach((match) => {
-        resultString += `
-        Returned Results:
-        Professor: ${match.id}
-        Review: ${match.metadata.review}
-        Subject: ${match.metadata.subject}
-        Stars: ${match.metadata.stars}
-        \n\n`
-    })
+      topK: 3,
+      includeMetadata: true,
+      vector: embedding.data[0].embedding,
+  });
+  
+  // Logging the results to ensure correctness
+  console.log('Pinecone query results:', results);
+  
+  let resultString = '';
+  if (results.matches.length === 0) {
+      // No matches found, handle this case explicitly
+      resultString = 'No matching professors found in the database.';
+  } else {
+      results.matches.forEach((match) => {
+          resultString += `
+          Returned Results:
+          Professor: ${match.id}
+          Review: ${match.metadata.review}
+          Subject: ${match.metadata.subject}
+          Stars: ${match.metadata.stars}
+          \n\n`;
+      });
+  }
+  
 
     const lastMessage = data[data.length - 1]
     const lastMessageContent = lastMessage.content + resultString

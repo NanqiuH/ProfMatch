@@ -1,8 +1,8 @@
-'use client'
-import { Box, Button, CircularProgress, Stack, TextField, Typography } from '@mui/material'
-import { useState, useRef, useEffect } from 'react'
+'use client';
 
-// Function to format timestamp
+import { Box, Button, CircularProgress, Stack, TextField, Typography, Card, CardContent } from '@mui/material';
+import { useState, useRef, useEffect } from 'react';
+
 const formatDate = (date) => {
   if (!date) return ''; 
   const options = {
@@ -14,21 +14,27 @@ const formatDate = (date) => {
   return date.toLocaleTimeString([], options);
 };
 
-// Function to clean and format the message content
 const cleanUpMessageContent = (content) => {
-  // Remove '**' from the content
   let cleanedContent = content.replace(/\*\*/g, '');
-
-  // Ensure each section (Name, Department, etc.) starts on a new line
   cleanedContent = cleanedContent.replace(/(Name:|Department:|Rating:|Summary:|Additional Guidance:)/g, '\n$1');
-
   return cleanedContent.trim();
+};
+
+const isValidURL = (string) => {
+  try {
+    new URL(string);
+    return true;
+  } catch (_) {
+    return false;
+  }
 };
 
 export default function Home() {
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [url, setUrl] = useState('');
+  const [error, setError] = useState('');
 
   useEffect(() => {
     setMessages([
@@ -40,32 +46,80 @@ export default function Home() {
     ]);
   }, []);
 
+  const handleURLSubmit = async () => {
+    const trimmedUrl = url.trim();
+    if (!trimmedUrl || !isValidURL(trimmedUrl)) {
+      setError('Please enter a valid URL.');
+      return;
+    }
+
+    setIsLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch('/api/scrape', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: trimmedUrl }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessages((messages) => [
+          ...messages,
+          {
+            role: 'assistant',
+            content: 'The data has been successfully scraped and saved.',
+            timestamp: new Date(),
+          },
+        ]);
+      } else {
+        setError('Failed to scrape the data. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error during URL submission:', error);
+      setError('An error occurred while processing your request.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const sendMessage = async () => {
+    if (!message.trim()) return;
+
     const newMessage = {
       role: 'user',
       content: message,
       timestamp: new Date(),
     };
-    
+
     setMessage('');
+    setError('');
     setMessages((messages) => [
       ...messages,
       newMessage,
       { role: 'assistant', content: '', timestamp: new Date() },
     ]);
-  
-    const response = fetch('/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([...messages, newMessage]),
-    }).then(async (res) => {
-      const reader = res.body.getReader();
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify([...messages, newMessage]),
+      });
+
+      const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let result = '';
-  
-      return reader.read().then(function processText({ done, value }) {
+
+      await reader.read().then(function processText({ done, value }) {
         if (done) {
           return result;
         }
@@ -80,7 +134,12 @@ export default function Home() {
         });
         return reader.read().then(processText);
       });
-    });
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setError('An error occurred while sending your message. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (event) => {
@@ -107,134 +166,199 @@ export default function Home() {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      justifyContent="flex-start" 
-      bgcolor="#f1f3f4"
+      justifyContent="flex-start"
+      bgcolor="#f4f7fc"
+      p={2}
     >
-      {/* Title at the top left */}
       <Box
-        width={{ xs: '90%', sm: '80%', md: '60%', lg: '40%' }}
-        textAlign="left"
-        mt={2}
-        ml={2}
+        width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+        textAlign="center"
+        mt={4}
+        mb={2}
       >
-        <Typography variant="h6" color="textPrimary">
-          Chat with ProfMatch AI
+        <Typography variant="h3" color="textPrimary" gutterBottom>
+          ProfMatch AI
+        </Typography>
+        <Typography variant="subtitle1" color="textSecondary">
+          Ask about professors or submit a URL to save professor information.
         </Typography>
       </Box>
 
-      {/* Chat interface */}
       <Stack
         direction={'column'}
-        width={{ xs: '90%', sm: '80%', md: '60%', lg: '40%' }}
-        height="85vh"
+        width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+        height="60vh" 
         bgcolor="white"
-        borderRadius={2}
-        boxShadow={3}
-        p={2}
-        mt={2} 
-        spacing={3}
+        borderRadius={4}
+        boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)" 
+        p={3}
+        spacing={2}
+        overflow="auto"
       >
-        <Stack
-          direction={'column'}
-          spacing={2}
-          flexGrow={1}
-          overflow="auto"
-          maxHeight="100%"
-          sx={{ padding: '0 16px', boxSizing: 'border-box' }}
-        >
-          {messages.map((message, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems:
-                  message.role === 'assistant' ? 'flex-start' : 'flex-end',
-              }}
-            >
-              {/* Label and timestamp for each message */}
-              <Typography
-                variant="caption"
-                color="textSecondary"
-                sx={{
-                  marginBottom: '4px',
-                  textAlign: message.role === 'assistant' ? 'left' : 'right',
-                  width: '100%', 
-                }}
-              >
-                {message.role === 'assistant'
-                  ? `ProfMatch Assistance`
-                  : 'You'}{' '}
-                | {formatDate(message.timestamp)}
-              </Typography>
-
-              {/* Message Bubble */}
-              <Box
-                display="flex"
-                justifyContent={
-                  message.role === 'assistant' ? 'flex-start' : 'flex-end'
-                }
-                width="100%"
-              >
-                <Box
-                  bgcolor={
-                    message.role === 'assistant'
-                      ? 'primary.main'
-                      : 'secondary.main'
-                  }
-                  color="white"
-                  borderRadius={8}
-                  p={2}
-                  sx={{
-                    maxWidth: '75%',
-                    wordWrap: 'break-word',
-                    whiteSpace: 'pre-wrap',
-                  }}
-                >
-                  <Typography variant="body2">
-                    {cleanUpMessageContent(message.content)}
-                  </Typography>
-                </Box>
-              </Box>
-            </Box>
-          ))}
-          <div ref={messagesEndRef} />
-        </Stack>
-        <Stack direction={'row'} spacing={2} alignItems="center">
-          <TextField
-            label="Type a message"
-            fullWidth
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={isLoading}
-            variant="outlined"
-            multiline
-            rows={1}
+        {messages.map((message, index) => (
+          <Box
+            key={index}
             sx={{
-              '& .MuiOutlinedInput-root': {
-                borderRadius: '50px',
-              },
-            }}
-          />
-          <Button
-            variant="contained"
-            onClick={sendMessage}
-            disabled={isLoading}
-            sx={{
-              minWidth: 50,
-              minHeight: 50,
-              borderRadius: '50%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems:
+                message.role === 'assistant' ? 'flex-start' : 'flex-end',
+              mb: 2,
             }}
           >
-            {isLoading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              'Send'
-            )}
-          </Button>
-        </Stack>
+            <Typography
+              variant="caption"
+              color="textSecondary"
+              sx={{
+                marginBottom: '4px',
+                textAlign: message.role === 'assistant' ? 'left' : 'right',
+                width: '100%', 
+              }}
+            >
+              {message.role === 'assistant'
+                ? `ProfMatch Assistant`
+                : 'You'}{' '}
+              | {formatDate(message.timestamp)}
+            </Typography>
+
+            <Box
+              bgcolor={
+                message.role === 'assistant'
+                  ? '#e0e7ff'
+                  : 'primary.main'
+              }
+              color={message.role === 'assistant' ? 'textPrimary' : 'white'}
+              borderRadius={3}
+              p={2}
+              sx={{
+                maxWidth: '75%',
+                wordWrap: 'break-word',
+                whiteSpace: 'pre-wrap',
+              }}
+            >
+              <Typography variant="body1">
+                {cleanUpMessageContent(message.content)}
+              </Typography>
+            </Box>
+          </Box>
+        ))}
+        <div ref={messagesEndRef} />
       </Stack>
+
+      {error && (
+        <Box
+          width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+          mt={2}
+          p={2}
+          bgcolor="error.main"
+          color="white"
+          borderRadius={2}
+          textAlign="center"
+        >
+          <Typography variant="body1">{error}</Typography>
+        </Box>
+      )}
+
+      <Stack
+        direction={'row'}
+        spacing={2}
+        alignItems="center"
+        width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+        mt={2}
+        mb={4} 
+      >
+        <TextField
+          label="Ask about professors"
+          fullWidth
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyPress={handleKeyPress}
+          disabled={isLoading}
+          variant="outlined"
+          multiline
+          rows={1}
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              borderRadius: '30px',
+              backgroundColor: 'white',
+              borderColor: '#d1d9e6',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: '#d1d9e6',
+            },
+          }}
+        />
+        <Button
+          variant="contained"
+          onClick={sendMessage}
+          disabled={isLoading}
+          sx={{
+            minWidth: 60,
+            minHeight: 55,
+            borderRadius: '20%',
+            bgcolor: '#4a90e2',
+            color: 'white',
+            '&:hover': {
+              bgcolor: '#357abd',
+            },
+          }}
+        >
+          {isLoading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            'Send'
+          )}
+        </Button>
+      </Stack>
+
+      <Card
+        variant="outlined"
+        sx={{
+          width: { xs: '100%', sm: '80%', md: '60%', lg: '50%' },
+          mt: 2,
+          borderRadius: 4,
+          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", 
+          borderColor: '#d1d9e6',
+        }}
+      >
+        <CardContent>
+          <Stack direction={'row'} spacing={2} alignItems="center">
+            <TextField
+              label="Professor's URL"
+              fullWidth
+              value={url}
+              onChange={(e) => setUrl(e.target.value)}
+              variant="outlined"
+              sx={{
+                '& .MuiOutlinedInput-root': {
+                  borderRadius: '30px',
+                  backgroundColor: 'white',
+                  borderColor: '#d1d9e6',
+                },
+                '& .MuiOutlinedInput-notchedOutline': {
+                  borderColor: '#d1d9e6',
+                },
+              }}
+            />
+            <Button
+              variant="contained"
+              onClick={handleURLSubmit}
+              disabled={isLoading}
+              sx={{
+                borderRadius: '30px',
+                bgcolor: '#4a90e2',
+                color: 'white',
+                '&:hover': {
+                  bgcolor: '#357abd',
+                },
+                height: '56px', 
+              }}
+            >
+              Submit URL
+            </Button>
+          </Stack>
+        </CardContent>
+      </Card>
     </Box>
   );
 }
