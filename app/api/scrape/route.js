@@ -27,8 +27,6 @@ export async function POST(req) {
       throw new Error('Failed to scrape some of the professor data. Please check the selectors.');
     }
 
-    console.log(professorData);
-
     // Connect to Pinecone
     const pc = new Pinecone({
       apiKey: process.env.PINECONE_API_KEY,

@@ -2,6 +2,28 @@
 
 import { Box, Button, CircularProgress, Stack, TextField, Typography, Card, CardContent } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#3f51b5', // A more pronounced primary color
+    },
+    secondary: {
+      main: '#f50057', // Accent color
+    },
+  },
+  typography: {
+    h3: {
+      fontSize: '2.5rem',
+      fontWeight: 700,
+    },
+    subtitle1: {
+      fontSize: '1.25rem',
+      color: '#6c757d',
+    },
+  },
+});
 
 const formatDate = (date) => {
   if (!date) return ''; 
@@ -160,205 +182,228 @@ export default function Home() {
   }, [messages]);
 
   return (
-    <Box
-      width="100vw"
-      height="100vh"
-      display="flex"
-      flexDirection="column"
-      alignItems="center"
-      justifyContent="flex-start"
-      bgcolor="#f4f7fc"
-      p={2}
-    >
+    <ThemeProvider theme={theme}>
       <Box
-        width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
-        textAlign="center"
-        mt={4}
-        mb={2}
+        width="100vw"
+        height="100vh"
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        justifyContent="flex-start"
+        bgcolor="#f4f7fc"
+        p={2}
       >
-        <Typography variant="h3" color="textPrimary" gutterBottom>
-          ProfMatch AI
-        </Typography>
-        <Typography variant="subtitle1" color="textSecondary">
-          Ask about professors or submit a URL to save professor information.
-        </Typography>
-      </Box>
-
-      <Stack
-        direction={'column'}
-        width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
-        height="60vh" 
-        bgcolor="white"
-        borderRadius={4}
-        boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)" 
-        p={3}
-        spacing={2}
-        overflow="auto"
-      >
-        {messages.map((message, index) => (
-          <Box
-            key={index}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems:
-                message.role === 'assistant' ? 'flex-start' : 'flex-end',
-              mb: 2,
-            }}
-          >
-            <Typography
-              variant="caption"
-              color="textSecondary"
-              sx={{
-                marginBottom: '4px',
-                textAlign: message.role === 'assistant' ? 'left' : 'right',
-                width: '100%', 
-              }}
-            >
-              {message.role === 'assistant'
-                ? `ProfMatch Assistant`
-                : 'You'}{' '}
-              | {formatDate(message.timestamp)}
-            </Typography>
-
-            <Box
-              bgcolor={
-                message.role === 'assistant'
-                  ? '#e0e7ff'
-                  : 'primary.main'
-              }
-              color={message.role === 'assistant' ? 'textPrimary' : 'white'}
-              borderRadius={3}
-              p={2}
-              sx={{
-                maxWidth: '75%',
-                wordWrap: 'break-word',
-                whiteSpace: 'pre-wrap',
-              }}
-            >
-              <Typography variant="body1">
-                {cleanUpMessageContent(message.content)}
-              </Typography>
-            </Box>
-          </Box>
-        ))}
-        <div ref={messagesEndRef} />
-      </Stack>
-
-      {error && (
         <Box
           width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
-          mt={2}
-          p={2}
-          bgcolor="error.main"
-          color="white"
-          borderRadius={2}
           textAlign="center"
+          mt={2}
+          mb={2}
         >
-          <Typography variant="body1">{error}</Typography>
+          <Typography variant="h3" color="primary" gutterBottom>
+            ProfMatch AI
+          </Typography>
+          <Typography variant="subtitle1" color="textSecondary">
+            Ask about professors or submit a URL to save professor information.
+          </Typography>
         </Box>
-      )}
 
-      <Stack
-        direction={'row'}
-        spacing={2}
-        alignItems="center"
-        width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
-        mt={2}
-        mb={4} 
-      >
-        <TextField
-          label="Ask about professors"
-          fullWidth
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyPress={handleKeyPress}
-          disabled={isLoading}
-          variant="outlined"
-          multiline
-          rows={1}
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              borderRadius: '30px',
-              backgroundColor: 'white',
-              borderColor: '#d1d9e6',
-            },
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#d1d9e6',
-            },
-          }}
-        />
-        <Button
-          variant="contained"
-          onClick={sendMessage}
-          disabled={isLoading}
-          sx={{
-            minWidth: 60,
-            minHeight: 55,
-            borderRadius: '20%',
-            bgcolor: '#4a90e2',
-            color: 'white',
-            '&:hover': {
-              bgcolor: '#357abd',
-            },
-          }}
+        <Stack
+          direction={'column'}
+          width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+          height="65vh"
+          bgcolor="white"
+          borderRadius={4}
+          boxShadow="0 4px 12px rgba(0, 0, 0, 0.1)"
+          p={2}
+          spacing={2}
+          overflow="auto"
         >
-          {isLoading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            'Send'
-          )}
-        </Button>
-      </Stack>
-
-      <Card
-        variant="outlined"
-        sx={{
-          width: { xs: '100%', sm: '80%', md: '60%', lg: '50%' },
-          mt: 2,
-          borderRadius: 4,
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", 
-          borderColor: '#d1d9e6',
-        }}
-      >
-        <CardContent>
-          <Stack direction={'row'} spacing={2} alignItems="center">
-            <TextField
-              label="Professor's URL"
-              fullWidth
-              value={url}
-              onChange={(e) => setUrl(e.target.value)}
-              variant="outlined"
+          {messages.map((message, index) => (
+            <Box
+              key={index}
               sx={{
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '30px',
-                  backgroundColor: 'white',
-                  borderColor: '#d1d9e6',
-                },
-                '& .MuiOutlinedInput-notchedOutline': {
-                  borderColor: '#d1d9e6',
-                },
-              }}
-            />
-            <Button
-              variant="contained"
-              onClick={handleURLSubmit}
-              disabled={isLoading}
-              sx={{
-                borderRadius: '30px',
-                bgcolor: '#4a90e2',
-                color: 'white',
-                '&:hover': {
-                  bgcolor: '#357abd',
-                },
-                height: '56px', 
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: message.role === 'assistant' ? 'flex-start' : 'flex-end',
+                mb: 2,
               }}
             >
-              Submit URL
-            </Button>
-          </Stack>
-        </CardContent>
-      </Card>
-    </Box>
+              <Typography
+                variant="caption"
+                color="textSecondary"
+                sx={{
+                  marginBottom: '4px',
+                  textAlign: message.role === 'assistant' ? 'left' : 'right',
+                  width: '100%',
+                }}
+              >
+                {message.role === 'assistant' ? `ProfMatch Assistant` : 'You'} | {formatDate(message.timestamp)}
+              </Typography>
+
+              <Box
+                bgcolor={message.role === 'assistant' ? '#e0e7ff' : 'primary.main'}
+                color={message.role === 'assistant' ? 'textPrimary' : 'white'}
+                borderRadius={3}
+                p={2}
+                sx={{
+                  maxWidth: '75%',
+                  wordWrap: 'break-word',
+                  whiteSpace: 'pre-wrap',
+                }}
+              >
+                <Typography variant="body1">
+                  {cleanUpMessageContent(message.content)}
+                </Typography>
+              </Box>
+            </Box>
+          ))}
+          <div ref={messagesEndRef} />
+        </Stack>
+
+        {error && (
+          <Box
+            width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+            mt={2}
+            p={2}
+            bgcolor="error.main"
+            color="white"
+            borderRadius={2}
+            textAlign="center"
+          >
+            <Typography variant="body1">{error}</Typography>
+          </Box>
+        )}
+
+        <Stack
+          direction={'row'}
+          spacing={2}
+          alignItems="center"
+          width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+          mt={2}
+          mb={2}
+        >
+          <TextField
+            label="Ask about professors"
+            fullWidth
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={isLoading}
+            variant="outlined"
+            multiline
+            rows={1}
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: '30px',
+                backgroundColor: 'white',
+                borderColor: '#d1d9e6',
+                '&:hover': {
+                  borderColor: '#3f51b5',
+                },
+                '&.Mui-focused': {
+                  borderColor: '#3f51b5',
+                },
+              },
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#d1d9e6',
+              },
+            }}
+          />
+          <Button
+            variant="contained"
+            onClick={sendMessage}
+            disabled={isLoading}
+            sx={{
+              minWidth: 60,
+              minHeight: 55,
+              borderRadius: '20%',
+              bgcolor: '#4a90e2',
+              color: 'white',
+              '&:hover': {
+                bgcolor: '#357abd',
+                transform: 'scale(1.05)',
+                transition: 'all 0.3s ease',
+              },
+            }}
+          >
+            {isLoading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              'Send'
+            )}
+          </Button>
+        </Stack>
+
+        <Box
+          width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
+          textAlign="center"
+          mt={1}
+          mb={1}
+        >
+          <Typography variant="h5" color="textSecondary">
+            If you want to save a professor into the database, submit the URL below
+          </Typography>
+        </Box>
+
+        <Card
+          variant="outlined"
+          sx={{
+            width: { xs: '100%', sm: '80%', md: '60%', lg: '50%' },
+            mt: 1,
+            borderRadius: 4,
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)", 
+            borderColor: '#d1d9e6',
+            transition: 'all 0.3s ease',
+            '&:hover': {
+              boxShadow: "0 6px 18px rgba(0, 0, 0, 0.2)",
+            },
+          }}
+        >
+          <CardContent>
+            <Stack direction={'row'} spacing={2} alignItems="center">
+              <TextField
+                label="Professor's URL"
+                fullWidth
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+                variant="outlined"
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    borderRadius: '30px',
+                    backgroundColor: 'white',
+                    borderColor: '#d1d9e6',
+                    '&:hover': {
+                      borderColor: '#3f51b5',
+                    },
+                    '&.Mui-focused': {
+                      borderColor: '#3f51b5',
+                    },
+                  },
+                  '& .MuiOutlinedInput-notchedOutline': {
+                    borderColor: '#d1d9e6',
+                  },
+                }}
+              />
+              <Button
+                variant="contained"
+                onClick={handleURLSubmit}
+                disabled={isLoading}
+                sx={{
+                  borderRadius: '30px',
+                  bgcolor: '#4a90e2',
+                  color: 'white',
+                  '&:hover': {
+                    bgcolor: '#357abd',
+                  },
+                  height: '56px',
+                }}
+              >
+                Submit
+              </Button>
+            </Stack>
+          </CardContent>
+        </Card>
+      </Box>
+    </ThemeProvider>
   );
 }
