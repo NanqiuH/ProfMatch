@@ -4,13 +4,14 @@ import { Box, Button, CircularProgress, Stack, TextField, Typography, Card, Card
 import { useState, useRef, useEffect } from 'react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
+// Custom theme creation with a primary and secondary color palette and typography settings
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#3f51b5', // A more pronounced primary color
+      main: '#3f51b5', // Primary color used in the application
     },
     secondary: {
-      main: '#f50057', // Accent color
+      main: '#f50057', // Secondary accent color
     },
   },
   typography: {
@@ -25,6 +26,11 @@ const theme = createTheme({
   },
 });
 
+/**
+ * Formats a Date object to a time string in 'hh:mm:ss' format
+ * @param {Date} date - The date object to format
+ * @returns {string} - The formatted time string or an empty string if no date is provided
+ */
 const formatDate = (date) => {
   if (!date) return ''; 
   const options = {
@@ -36,12 +42,23 @@ const formatDate = (date) => {
   return date.toLocaleTimeString([], options);
 };
 
+/**
+ * Cleans up the content of a message by removing certain characters
+ * and formatting it for better readability.
+ * @param {string} content - The raw content of the message
+ * @returns {string} - The cleaned and formatted message content
+ */
 const cleanUpMessageContent = (content) => {
   let cleanedContent = content.replace(/\*\*/g, '');
   cleanedContent = cleanedContent.replace(/(Name:|Department:|Rating:|Summary:|Additional Guidance:)/g, '\n$1');
   return cleanedContent.trim();
 };
 
+/**
+ * Validates if a string is a properly formatted URL
+ * @param {string} string - The string to validate
+ * @returns {boolean} - True if the string is a valid URL, false otherwise
+ */
 const isValidURL = (string) => {
   try {
     new URL(string);
@@ -51,13 +68,18 @@ const isValidURL = (string) => {
   }
 };
 
+/**
+ * The main component of the application that renders the ProfMatch AI interface
+ */
 export default function Home() {
-  const [messages, setMessages] = useState([]);
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [url, setUrl] = useState('');
-  const [error, setError] = useState('');
+  // State management using React's useState hook
+  const [messages, setMessages] = useState([]); // Stores the chat messages
+  const [message, setMessage] = useState(''); // Stores the current user input
+  const [isLoading, setIsLoading] = useState(false); // Tracks the loading state
+  const [url, setUrl] = useState(''); // Stores the URL input by the user
+  const [error, setError] = useState(''); // Stores any error messages
 
+  // useEffect hook to initialize the chat with a welcome message from the assistant
   useEffect(() => {
     setMessages([
       {
@@ -68,6 +90,10 @@ export default function Home() {
     ]);
   }, []);
 
+  /**
+   * Handles the submission of a URL to the server for scraping
+   * Validates the URL and makes a POST request to the backend
+   */
   const handleURLSubmit = async () => {
     const trimmedUrl = url.trim();
     if (!trimmedUrl || !isValidURL(trimmedUrl)) {
@@ -109,6 +135,10 @@ export default function Home() {
     }
   };
 
+  /**
+   * Handles sending the user's message to the assistant
+   * Sends the message to the backend and updates the messages list
+   */
   const sendMessage = async () => {
     if (!message.trim()) return;
 
@@ -164,6 +194,11 @@ export default function Home() {
     }
   };
 
+  /**
+   * Handles the key press event for the message input field
+   * Sends the message if Enter is pressed without the Shift key
+   * @param {object} event - The key press event object
+   */
   const handleKeyPress = (event) => {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -171,16 +206,23 @@ export default function Home() {
     }
   };
 
+  // Reference to the end of the messages container to scroll into view
   const messagesEndRef = useRef(null);
 
+  /**
+   * Scrolls the messages container to the bottom
+   * Ensures the most recent message is visible
+   */
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  // useEffect to scroll to the bottom every time a new message is added
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
+  // JSX for rendering the UI components
   return (
     <ThemeProvider theme={theme}>
       <Box
@@ -193,6 +235,7 @@ export default function Home() {
         bgcolor="#f4f7fc"
         p={2}
       >
+        {/* Header section with title and subtitle */}
         <Box
           width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
           textAlign="center"
@@ -207,6 +250,7 @@ export default function Home() {
           </Typography>
         </Box>
 
+        {/* Chat container where messages are displayed */}
         <Stack
           direction={'column'}
           width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
@@ -228,6 +272,7 @@ export default function Home() {
                 mb: 2,
               }}
             >
+              {/* Timestamp and role indicator */}
               <Typography
                 variant="caption"
                 color="textSecondary"
@@ -240,6 +285,7 @@ export default function Home() {
                 {message.role === 'assistant' ? `ProfMatch Assistant` : 'You'} | {formatDate(message.timestamp)}
               </Typography>
 
+              {/* Message content */}
               <Box
                 bgcolor={message.role === 'assistant' ? '#e0e7ff' : 'primary.main'}
                 color={message.role === 'assistant' ? 'textPrimary' : 'white'}
@@ -260,6 +306,7 @@ export default function Home() {
           <div ref={messagesEndRef} />
         </Stack>
 
+        {/* Error message display */}
         {error && (
           <Box
             width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
@@ -274,6 +321,7 @@ export default function Home() {
           </Box>
         )}
 
+        {/* Input field and send button for user messages */}
         <Stack
           direction={'row'}
           spacing={2}
@@ -334,6 +382,7 @@ export default function Home() {
           </Button>
         </Stack>
 
+        {/* URL submission section */}
         <Box
           width={{ xs: '100%', sm: '80%', md: '60%', lg: '50%' }}
           textAlign="center"
