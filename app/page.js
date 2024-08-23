@@ -88,22 +88,6 @@ export default function Home() {
         timestamp: new Date(),
       },
     ]);
-
-    const trackingId = process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID;
-
-    if (trackingId) {
-      // Adding Google Analytics script dynamically
-      const script = document.createElement('script');
-      script.src = `https://www.googletagmanager.com/gtag/js?id=${trackingId}`;
-      script.async = true;
-      document.head.appendChild(script);
-
-      // Initializing Google Analytics
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', trackingId);
-    }
   }, []);
 
   /**
